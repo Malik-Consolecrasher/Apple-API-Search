@@ -1,5 +1,15 @@
 import { useState } from "react";
 import axios from 'axios';
+import './styles.css'
+
+
+function mediaObject(name, collectionName, artistName, releaseDate, image){
+  this.name = name;
+  this.collectionName = collectionName;
+  this.artistName = artistName;
+  this.releaseDate = releaseDate;
+  this.image = image
+}
 
 fetch("http://localhost:8000/api/getToken",{
             method: "GET",
@@ -15,12 +25,14 @@ fetch("http://localhost:8000/api/getToken",{
 
 
 
+
+
 function Searchbar(){
     const [search, setSearch] = useState("")
     const [media, setMedia] = useState("")
-    const [currentSearchResults, setCurrentSearchResults] = useState("")
-    const [currentSearchResultsCollection, setCurrentSearchResultsCollection] = useState("")
+    const [currentSearchResults, setCurrentSearchResults] = useState([])
     const [currentFavorites, setCurrentFavorites] = useState([])
+    let allResults = [];
 
     function handleChangeSearch(e){
         e.preventDefault();
@@ -47,18 +59,24 @@ function Searchbar(){
         })
         .then((response) => response.json())
         .then((data) =>{
+          allResults = []
+
           console.log(data);
-          setCurrentSearchResults(data.results[0].trackCensoredName)
-          setCurrentSearchResultsCollection(data.results[0].collectionCensoredName)
+          data.results.map(item =>{ 
+            if (item.trackCensoredName !== undefined){
+            allResults.push(new mediaObject(item.trackCensoredName, item.collectionName, item.artistName, item.releaseDate, item.artworkUrl100))}})
+          console.log(allResults)
+          setCurrentSearchResults(allResults)
         })
         .catch((error) => {
             console.error("Could not search", error)
         });
     };
-    function saveToFavorites(){
-      setCurrentFavorites(currentArray => [...currentArray, " " + currentSearchResults])
+    function saveToFavorites(e){
+      setCurrentFavorites(currentArray => [...currentArray, "," + e])
     }
 
+    
 
     return(
         <>
@@ -72,6 +90,7 @@ function Searchbar(){
             <label>
                 Media Type: 
                 <select type="Media"  value={media} onChange={handleChangeMedia}>
+                    <option value="all">All</option>   
                     <option value="movie">Movie</option>
                     <option value="podcast">podcast</option>
                     <option value="music">Music</option>
@@ -80,7 +99,7 @@ function Searchbar(){
                     <option value="tvShow">TV Show</option>
                     <option value="software">Software</option>
                     <option value="ebook">Ebook</option>     
-                    <option value="all">All</option>   
+
                 </select>
             </label>
             <br/>
@@ -90,11 +109,14 @@ function Searchbar(){
 
 
         
-          <p>The name of your search result is: {currentSearchResults}</p>
-          <p>Which is from: {currentSearchResultsCollection}</p>
-        
+          <ol>
+            {currentSearchResults.map(item =>
+              <li key ={item.name} onClick={() => saveToFavorites(item.name)}>Item Name: {item.name}<br/>from: {item.collectionName}<br/>By: {item.artistName}<br/>Released on: {item.releaseDate}<br/><img src={item.image} alt="Pic of relevent movie"/><br/><br/><br/></li>
+            )}
+          </ol>
 
-        <button onClick={saveToFavorites}>Save to favorites</button>
+
+        <button onClick={saveToFavorites}>Save All Results to favorites</button>
         <h1>Favorites List</h1>
         {currentFavorites}
         </>

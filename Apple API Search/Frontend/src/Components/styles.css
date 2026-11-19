@@ -1,0 +1,25 @@
+h1{
+  align-items: justify;
+}
+
+body{
+  background-color: aquamarine;
+}
+
+p{
+  font-family: 'Courier New', Courier, monospace;
+}
+
+label{
+  font-weight: bolder;
+}
+
+button{
+  padding: 25px, 25px;
+}
+
+li{
+  font-size: large;
+  font-weight: bold;
+}
+
