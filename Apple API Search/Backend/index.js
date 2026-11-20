@@ -21,7 +21,7 @@ app.post("/api/Itunes", VerifyToken, async (req, res) => {
         fetch(`https://itunes.apple.com/search?term=${newSearch.Search}&media=${newSearch.Media}`)
             .then(res => res.json())
             .then(data => res.send(data))
-            .catch(error => console.log('Error'))
+            .catch(error => res.status(403).json({message: error}))
 
 });
 

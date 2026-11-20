@@ -2,10 +2,12 @@ const jwt = require("jsonwebtoken")
 
 function VerifyToken(req, res, next){
 
-  const token = req.headers['authorization']
-  const tokenExtract = token.split(' ')[1]
 
   try{
+
+    
+  const token = req.headers['authorization']
+  const tokenExtract = token.split(' ')[1]
 
     const payload = jwt.verify(tokenExtract, "apiSender")
 
@@ -13,7 +15,7 @@ function VerifyToken(req, res, next){
     next()
   }
   catch (error){
-    res.status(403).json({messsage: "Invalid token sent"})
+    res.status(403).json({message: "Invalid token sent"})
   }
 }
 

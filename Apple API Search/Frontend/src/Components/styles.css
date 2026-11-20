@@ -1,3 +1,4 @@
+
 h1{
   align-items: justify;
 }
@@ -21,5 +22,10 @@ button{
 li{
   font-size: large;
   font-weight: bold;
+  align-items: center;
+  display: flex;
 }
 
+img {
+    padding-right: 25px;
+}

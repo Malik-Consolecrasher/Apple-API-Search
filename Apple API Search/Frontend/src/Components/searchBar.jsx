@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
 import './styles.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function mediaObject(name, collectionName, artistName, releaseDate, image){
@@ -33,6 +34,7 @@ function Searchbar(){
     const [currentSearchResults, setCurrentSearchResults] = useState([])
     const [currentFavorites, setCurrentFavorites] = useState([])
     let allResults = [];
+    let favoriteResults = []
 
     function handleChangeSearch(e){
         e.preventDefault();
@@ -72,8 +74,27 @@ function Searchbar(){
             console.error("Could not search", error)
         });
     };
-    function saveToFavorites(e){
-      setCurrentFavorites(currentArray => [...currentArray, "," + e])
+
+
+    function saveToFavorites(item){
+      let latestFavorite = new mediaObject(item.name, item.collectionName, item.artistName, item.releaseDate, item.image)
+      currentFavorites.map(item => {
+        favoriteResults.push(item)
+      })
+      favoriteResults.push(latestFavorite)
+      setCurrentFavorites(favoriteResults)
+    }
+
+    function deleteFromFavorites(item){
+      let deletionItem = item
+
+      currentFavorites.map(item => {
+        favoriteResults.push(item)
+      })
+
+      favoriteResults.splice(favoriteResults.indexOf(item), 1)
+
+      setCurrentFavorites(favoriteResults)
     }
 
     
@@ -111,14 +132,17 @@ function Searchbar(){
         
           <ol>
             {currentSearchResults.map(item =>
-              <li key ={item.name} onClick={() => saveToFavorites(item.name)}>Item Name: {item.name}<br/>from: {item.collectionName}<br/>By: {item.artistName}<br/>Released on: {item.releaseDate}<br/><img src={item.image} alt="Pic of relevent movie"/><br/><br/><br/></li>
+              <li className="searches" key ={item.name + item.collectionName}>Item Name: {item.name}<br/>from: {item.collectionName}<br/>By: {item.artistName}<br/>Released on: {item.releaseDate}<br/><img src={item.image} alt="Pic of relevent movie"/><br/> <button onClick={() => saveToFavorites(item)}>Add above to favorites</button><br/><br/><br/></li>
             )}
           </ol>
 
 
-        <button onClick={saveToFavorites}>Save All Results to favorites</button>
         <h1>Favorites List</h1>
-        {currentFavorites}
+        <ul>
+            {currentFavorites.map(item =>
+              <li key ={item.name + item.collectionName}>Item Name: {item.name}<br/>from: {item.collectionName}<br/>By: {item.artistName}<br/>Released on: {item.releaseDate}<br/><img src={item.image} alt="Pic of relevent movie"/><br/><button onClick={() => deleteFromFavorites(item)}>Remove above to favorites</button><br/><br/><br/></li>
+            )}
+        </ul>
         </>
     );
 }
